@@ -367,20 +367,24 @@ jobs:
           path: |
             ${{github.workspace}}/openal/build/libOpenAL32.a
             ${{github.workspace}}/openal/build/include
-
+  
   luajit-mingw32:
     runs-on: ubuntu-24.04
     steps:
-      - name: Install mingw-w64 and dependencies
+      - name: Install mingw-w64 and multilib
         run: |
           sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends mingw-w64
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq \
+            --no-install-recommends \
+            mingw-w64 gcc-multilib g++-multilib
+
       - name: Checkout LuaJIT
         uses: actions/checkout@v4
         with:
           repository: LuaJIT/LuaJIT
           ref: v2.1
           path: luajit
+
       - name: Build LuaJIT
         run: |
           cd luajit
@@ -388,6 +392,7 @@ jobs:
           mkdir -p build/include build/lib
           cp src/*.h build/include/
           cp src/libluajit.a build/lib/
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -779,7 +784,7 @@ jobs:
       - name: Build LuaJIT
         run: |
           cd luajit
-          make CC="x86_64-w64-mingw32-gcc" TARGET_SYS=Windows
+          make HOST_CC="gcc" CC="x86_64-w64-mingw32-gcc" TARGET_SYS=Windows
           mkdir -p build/include build/lib
           cp src/*.h build/include/
           cp src/libluajit.a build/lib/
