@@ -388,7 +388,7 @@ jobs:
       - name: Build LuaJIT
         run: |
           cd luajit
-          make HOST_CC="gcc -m32" CC="i686-w64-mingw32-gcc" TARGET_SYS=Windows
+          make BUILDMODE=static HOST_CC="gcc -m32" CC="i686-w64-mingw32-gcc" TARGET_SYS=Windows
           mkdir -p build/include build/lib
           cp src/*.h build/include/
           cp src/libluajit.a build/lib/
@@ -784,7 +784,7 @@ jobs:
       - name: Build LuaJIT
         run: |
           cd luajit
-          make HOST_CC="gcc" CC="x86_64-w64-mingw32-gcc" TARGET_SYS=Windows
+          make BUILDMODE=static HOST_CC="gcc" CC="x86_64-w64-mingw32-gcc" TARGET_SYS=Windows
           mkdir -p build/include build/lib
           cp src/*.h build/include/
           cp src/libluajit.a build/lib/
