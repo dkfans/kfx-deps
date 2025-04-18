@@ -384,9 +384,9 @@ jobs:
       - name: Build LuaJIT
         run: |
           cd luajit
-          make CROSS=i686-w64-mingw32- TARGET_SYS=Windows
+          make HOST_CC="gcc -m32" CC="i686-w64-mingw32-gcc" TARGET_SYS=Windows
           mkdir -p build/include build/lib
-          cp src/lua.h src/luaconf.h src/lualib.h src/lauxlib.h build/include/
+          cp src/*.h build/include/
           cp src/libluajit.a build/lib/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -779,7 +779,7 @@ jobs:
       - name: Build LuaJIT
         run: |
           cd luajit
-          make CC=x86_64-w64-mingw32-gcc TARGET_SYS=Windows
+          make CC="x86_64-w64-mingw32-gcc" TARGET_SYS=Windows
           mkdir -p build/include build/lib
           cp src/*.h build/include/
           cp src/libluajit.a build/lib/
