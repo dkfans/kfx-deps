@@ -428,14 +428,22 @@ jobs:
         run: |
           cp ${{github.workspace}}/zlib/build/zconf.h ${{github.workspace}}/zlib/
           cd ${{github.workspace}}/zlib/contrib/minizip && autoreconf -fvi
-          cd ${{github.workspace}}/zlib/contrib/minizip && ./configure
+          cd ${{github.workspace}}/zlib/contrib/minizip && CFLAGS="-m64 -march=x86-64" ./configure --host=x86_64-w64-mingw32
       - name: Build minizip
         run: |
           make -C ${{github.workspace}}/zlib/contrib/minizip
       - name: Package files
         run: |
             mkdir -p ${{github.workspace}}/zlib/build/include/minizip
-            cp ${{github.workspace}}/zlib/contrib/minizip/.libs/libminizip.a ${{github.workspace}}/zlib/build/
+            cp ${{github.workspace}}/zlib/contrib/minizip/ioapi.o ${{github.workspace}}/zlib/contrib/minizip/ioapi.lib
+            cp ${{github.workspace}}/zlib/contrib/minizip/mztools.o ${{github.workspace}}/zlib/contrib/minizip/mztools.lib
+            cp ${{github.workspace}}/zlib/contrib/minizip/unzip.o ${{github.workspace}}/zlib/contrib/minizip/unzip.lib
+            cp ${{github.workspace}}/zlib/contrib/minizip/zip.o ${{github.workspace}}/zlib/contrib/minizip/zip.lib
+            ar cr ${{github.workspace}}/zlib/build/libminizip.a \
+              ${{github.workspace}}/zlib/contrib/minizip/ioapi.lib \
+              ${{github.workspace}}/zlib/contrib/minizip/mztools.lib \
+              ${{github.workspace}}/zlib/contrib/minizip/unzip.lib \
+              ${{github.workspace}}/zlib/contrib/minizip/zip.lib
             cp ${{github.workspace}}/zlib/*.h ${{github.workspace}}/zlib/build/include/
             cp ${{github.workspace}}/zlib/contrib/minizip/*.h ${{github.workspace}}/zlib/build/include/minizip/
             cp ${{github.workspace}}/zlib/build/zconf.h ${{github.workspace}}/zlib/build/include/
