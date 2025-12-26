@@ -367,7 +367,7 @@ jobs:
           path: |
             ${{github.workspace}}/openal/build/libOpenAL32.a
             ${{github.workspace}}/openal/build/include
-  
+
   luajit-mingw32:
     runs-on: ubuntu-24.04
     steps:
