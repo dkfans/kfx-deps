@@ -263,7 +263,6 @@ jobs:
               --disable-static \
               --disable-avdevice \
               --disable-swscale \
-              --disable-postproc \
               --disable-avfilter \
               --disable-network \
               --disable-dwt \
@@ -671,7 +670,6 @@ jobs:
               --disable-static \
               --disable-avdevice \
               --disable-swscale \
-              --disable-postproc \
               --disable-avfilter \
               --disable-network \
               --disable-dwt \
