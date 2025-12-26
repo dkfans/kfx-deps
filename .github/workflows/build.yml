@@ -27,7 +27,7 @@ jobs:
         run: |
           cp ${{github.workspace}}/zlib/build/zconf.h ${{github.workspace}}/zlib/
           cd ${{github.workspace}}/zlib/contrib/minizip && autoreconf -fvi
-          cd ${{github.workspace}}/zlib/contrib/minizip && CFLAGS="-m32 -march=x86-64" ./configure --host=i686-w64-mingw32
+          cd ${{github.workspace}}/zlib/contrib/minizip && CFLAGS="-m32 -march=i686" ./configure --host=i686-w64-mingw32
       - name: Build minizip
         run: |
           make -C ${{github.workspace}}/zlib/contrib/minizip
