@@ -186,7 +186,7 @@ jobs:
       - name: Build
         run: |
           mkdir -p ${{github.workspace}}/astronomy/build
-          i686-w64-mingw32-gcc -m32 -march=x86-64 -c \
+          i686-w64-mingw32-gcc -m32 -march=i686 -c \
             -I ${{github.workspace}}/astronomy/source/c \
             -o ${{github.workspace}}/astronomy/build/astronomy.o \
             ${{github.workspace}}/astronomy/source/c/astronomy.c
