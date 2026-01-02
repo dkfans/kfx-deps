@@ -422,7 +422,8 @@ jobs:
       - name: Package files
         run: |
           mkdir -p ${{github.workspace}}/miniupnp/build/include/miniupnpc
-          cp ${{github.workspace}}/miniupnp/miniupnpc/*.h ${{github.workspace}}/miniupnp/build/include/miniupnpc/
+          cp ${{github.workspace}}/miniupnp/miniupnpc/include/*.h ${{github.workspace}}/miniupnp/build/include/miniupnpc/
+          cp ${{github.workspace}}/miniupnp/miniupnpc/miniupnpcstrings.h ${{github.workspace}}/miniupnp/build/include/miniupnpc/
           cp ${{github.workspace}}/miniupnp/miniupnpc/libminiupnpc.a ${{github.workspace}}/miniupnp/build/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -891,7 +892,8 @@ jobs:
       - name: Package files
         run: |
           mkdir -p ${{github.workspace}}/miniupnp/build/include/miniupnpc
-          cp ${{github.workspace}}/miniupnp/miniupnpc/*.h ${{github.workspace}}/miniupnp/build/include/miniupnpc/
+          cp ${{github.workspace}}/miniupnp/miniupnpc/include/*.h ${{github.workspace}}/miniupnp/build/include/miniupnpc/
+          cp ${{github.workspace}}/miniupnp/miniupnpc/miniupnpcstrings.h ${{github.workspace}}/miniupnp/build/include/miniupnpc/
           cp ${{github.workspace}}/miniupnp/miniupnpc/libminiupnpc.a ${{github.workspace}}/miniupnp/build/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
