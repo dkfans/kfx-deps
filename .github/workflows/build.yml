@@ -306,24 +306,22 @@ jobs:
               libavutil/libavutil.a \
               libswresample/libswresample.a \
               libswscale/libswscale.a
+      - name: Package files
+        run: |
+          mkdir -p ${{github.workspace}}/ffmpeg-package/lib
+          mkdir -p ${{github.workspace}}/ffmpeg-package/include
+          cp -r ${{github.workspace}}/ffmpeg/libavformat ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libavcodec ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libavutil ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libswresample ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libswscale ${{github.workspace}}/ffmpeg-package/
+          cp ${{github.workspace}}/x264-install/lib/libx264.a ${{github.workspace}}/ffmpeg-package/lib/
+          cp ${{github.workspace}}/x264-install/include/*.h ${{github.workspace}}/ffmpeg-package/include/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-mingw32
-          path: |
-            ${{github.workspace}}/ffmpeg/libavformat/*.h
-            ${{github.workspace}}/ffmpeg/libavformat/libavformat.a
-            ${{github.workspace}}/ffmpeg/libavcodec/*.h
-            ${{github.workspace}}/ffmpeg/libavcodec/libavcodec.a
-            ${{github.workspace}}/ffmpeg/libavutil/*.h
-            ${{github.workspace}}/ffmpeg/libavutil/libavutil.a
-            ${{github.workspace}}/ffmpeg/libswresample/*.h
-            ${{github.workspace}}/ffmpeg/libswresample/libswresample.a
-            ${{github.workspace}}/ffmpeg/libswscale/*.h
-            ${{github.workspace}}/ffmpeg/libswscale/libswscale.a
-            ${{github.workspace}}/x264-install/include/x264.h
-            ${{github.workspace}}/x264-install/include/x264_config.h
-            ${{github.workspace}}/x264-install/lib/libx264.a
+          path: ${{github.workspace}}/ffmpeg-package
 
   openal-mingw32:
     runs-on: ubuntu-24.04
@@ -804,24 +802,22 @@ jobs:
               libavutil/libavutil.a \
               libswresample/libswresample.a \
               libswscale/libswscale.a
+      - name: Package files
+        run: |
+          mkdir -p ${{github.workspace}}/ffmpeg-package/lib
+          mkdir -p ${{github.workspace}}/ffmpeg-package/include
+          cp -r ${{github.workspace}}/ffmpeg/libavformat ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libavcodec ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libavutil ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libswresample ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libswscale ${{github.workspace}}/ffmpeg-package/
+          cp ${{github.workspace}}/x264-install/lib/libx264.a ${{github.workspace}}/ffmpeg-package/lib/
+          cp ${{github.workspace}}/x264-install/include/*.h ${{github.workspace}}/ffmpeg-package/include/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-mingw64
-          path: |
-            ${{github.workspace}}/ffmpeg/libavformat/*.h
-            ${{github.workspace}}/ffmpeg/libavformat/libavformat.a
-            ${{github.workspace}}/ffmpeg/libavcodec/*.h
-            ${{github.workspace}}/ffmpeg/libavcodec/libavcodec.a
-            ${{github.workspace}}/ffmpeg/libavutil/*.h
-            ${{github.workspace}}/ffmpeg/libavutil/libavutil.a
-            ${{github.workspace}}/ffmpeg/libswresample/*.h
-            ${{github.workspace}}/ffmpeg/libswresample/libswresample.a
-            ${{github.workspace}}/ffmpeg/libswscale/*.h
-            ${{github.workspace}}/ffmpeg/libswscale/libswscale.a
-            ${{github.workspace}}/x264-install/include/x264.h
-            ${{github.workspace}}/x264-install/include/x264_config.h
-            ${{github.workspace}}/x264-install/lib/libx264.a
+          path: ${{github.workspace}}/ffmpeg-package
 
   openal-mingw64:
     runs-on: ubuntu-24.04
