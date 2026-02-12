@@ -51,24 +51,17 @@ jobs:
   enet6-mingw32:
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout enet6
-        uses: actions/checkout@v4
-        with:
-          repository: SirLynix/enet6
-          ref: master
-          path: enet6
-      - name: Package files
+      - name: Download enet6 release
         run: |
-          mkdir -p ${{github.workspace}}/enet6/build/src
-          cp -r ${{github.workspace}}/enet6/include ${{github.workspace}}/enet6/build/
-          cp ${{github.workspace}}/enet6/*.c ${{github.workspace}}/enet6/build/src/
+          curl -L -o enet6.zip https://github.com/SirLynix/enet6/releases/download/v6.1.3/enet6-mingw_i386_release_static.zip
+          unzip enet6.zip -d ${{github.workspace}}/enet6
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: enet6-mingw32
           path: |
-            ${{github.workspace}}/enet6/build/include
-            ${{github.workspace}}/enet6/build/src
+            ${{github.workspace}}/enet6/include
+            ${{github.workspace}}/enet6/lib/libenet6.a
 
   spng-mingw32:
     runs-on: ubuntu-24.04
@@ -515,24 +508,17 @@ jobs:
   enet6-mingw64:
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout enet6
-        uses: actions/checkout@v4
-        with:
-          repository: SirLynix/enet6
-          ref: master
-          path: enet6
-      - name: Package files
+      - name: Download enet6 release
         run: |
-          mkdir -p ${{github.workspace}}/enet6/build/src
-          cp -r ${{github.workspace}}/enet6/include ${{github.workspace}}/enet6/build/
-          cp ${{github.workspace}}/enet6/*.c ${{github.workspace}}/enet6/build/src/
+          curl -L -o enet6.zip https://github.com/SirLynix/enet6/releases/download/v6.1.3/enet6-mingw_x86_64_release_static.zip
+          unzip enet6.zip -d ${{github.workspace}}/enet6
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: enet6-mingw64
           path: |
-            ${{github.workspace}}/enet6/build/include
-            ${{github.workspace}}/enet6/build/src
+            ${{github.workspace}}/enet6/include
+            ${{github.workspace}}/enet6/lib/libenet6.a
 
   spng-mingw64:
     runs-on: ubuntu-24.04
