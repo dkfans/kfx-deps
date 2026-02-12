@@ -48,39 +48,27 @@ jobs:
             ${{github.workspace}}/zlib/build/libz.a
             ${{github.workspace}}/zlib/build/libminizip.a
 
-  enet-mingw32:
+  enet6-mingw32:
     runs-on: ubuntu-24.04
     steps:
-      - name: Install mingw-w64
-        run: |
-          sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends mingw-w64
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Checkout enet
+      - name: Checkout enet6
         uses: actions/checkout@v4
         with:
-          repository: lsalzman/enet
+          repository: SirLynix/enet6
           ref: master
-          path: enet
-      - name: Configure
-        run: |
-          CMAKE_TOOLCHAIN_FILE=${{github.workspace}}/mingw32.cmake \
-          CMAKE_BUILD_TYPE=Release cmake \
-            -B ${{github.workspace}}/enet/build \
-            -S ${{github.workspace}}/enet
-      - name: Build
-        run: cmake --build ${{github.workspace}}/enet/build --config Release
+          path: enet6
       - name: Package files
-        run:
-          cp -r ${{github.workspace}}/enet/include ${{github.workspace}}/enet/build/
+        run: |
+          mkdir -p ${{github.workspace}}/enet6/build/src
+          cp -r ${{github.workspace}}/enet6/include ${{github.workspace}}/enet6/build/
+          cp ${{github.workspace}}/enet6/*.c ${{github.workspace}}/enet6/build/src/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: enet-mingw32
+          name: enet6-mingw32
           path: |
-            ${{github.workspace}}/enet/build/include
-            ${{github.workspace}}/enet/build/libenet.a
+            ${{github.workspace}}/enet6/build/include
+            ${{github.workspace}}/enet6/build/src
 
   spng-mingw32:
     runs-on: ubuntu-24.04
@@ -336,7 +324,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: kcat/openal-soft
-          ref: 1.23.1
+          ref: 1.25.1
           path: openal
       - name: Configure
         run: |
@@ -545,39 +533,27 @@ jobs:
             ${{github.workspace}}/zlib/build/libz.a
             ${{github.workspace}}/zlib/build/libminizip.a
 
-  enet-mingw64:
+  enet6-mingw64:
     runs-on: ubuntu-24.04
     steps:
-      - name: Install mingw-w64
-        run: |
-          sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends mingw-w64
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Checkout enet
+      - name: Checkout enet6
         uses: actions/checkout@v4
         with:
-          repository: lsalzman/enet
+          repository: SirLynix/enet6
           ref: master
-          path: enet
-      - name: Configure
-        run: |
-          CMAKE_TOOLCHAIN_FILE=${{github.workspace}}/mingw64.cmake \
-          CMAKE_BUILD_TYPE=Release cmake \
-            -B ${{github.workspace}}/enet/build \
-            -S ${{github.workspace}}/enet
-      - name: Build
-        run: cmake --build ${{github.workspace}}/enet/build --config Release
+          path: enet6
       - name: Package files
-        run:
-          cp -r ${{github.workspace}}/enet/include ${{github.workspace}}/enet/build/
+        run: |
+          mkdir -p ${{github.workspace}}/enet6/build/src
+          cp -r ${{github.workspace}}/enet6/include ${{github.workspace}}/enet6/build/
+          cp ${{github.workspace}}/enet6/*.c ${{github.workspace}}/enet6/build/src/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: enet-mingw64
+          name: enet6-mingw64
           path: |
-            ${{github.workspace}}/enet/build/include
-            ${{github.workspace}}/enet/build/libenet.a
+            ${{github.workspace}}/enet6/build/include
+            ${{github.workspace}}/enet6/build/src
 
   spng-mingw64:
     runs-on: ubuntu-24.04
@@ -832,7 +808,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: kcat/openal-soft
-          ref: 1.23.1
+          ref: 1.25.1
           path: openal
       - name: Configure
         run: |
@@ -1081,7 +1057,7 @@ jobs:
       - zlib-mingw32
       - centijson-mingw32
       - astronomy-mingw32
-      - enet-mingw32
+      - enet6-mingw32
       - spng-mingw32
       - tomlc99-mingw32
       - ffmpeg-mingw32
@@ -1092,7 +1068,7 @@ jobs:
       - zlib-mingw64
       - centijson-mingw64
       - astronomy-mingw64
-      - enet-mingw64
+      - enet6-mingw64
       - spng-mingw64
       - tomlc99-mingw64
       - ffmpeg-mingw64
@@ -1119,11 +1095,11 @@ jobs:
         with:
           name: astronomy-mingw32
           path: ${{github.workspace}}/astronomy-mingw32
-      - name: Download enet-mingw32
+      - name: Download enet6-mingw32
         uses: actions/download-artifact@v4
         with:
-          name: enet-mingw32
-          path: ${{github.workspace}}/enet-mingw32
+          name: enet6-mingw32
+          path: ${{github.workspace}}/enet6-mingw32
       - name: Download spng-mingw32
         uses: actions/download-artifact@v4
         with:
@@ -1175,11 +1151,11 @@ jobs:
         with:
           name: astronomy-mingw64
           path: ${{github.workspace}}/astronomy-mingw64
-      - name: Download enet-mingw64
+      - name: Download enet6-mingw64
         uses: actions/download-artifact@v4
         with:
-          name: enet-mingw64
-          path: ${{github.workspace}}/enet-mingw64
+          name: enet6-mingw64
+          path: ${{github.workspace}}/enet6-mingw64
       - name: Download spng-mingw64
         uses: actions/download-artifact@v4
         with:
@@ -1235,7 +1211,7 @@ jobs:
           tar czf ${{github.workspace}}/zlib-mingw32.tar.gz -C ${{github.workspace}}/zlib-mingw32 .
           tar czf ${{github.workspace}}/centijson-mingw32.tar.gz -C ${{github.workspace}}/centijson-mingw32 .
           tar czf ${{github.workspace}}/astronomy-mingw32.tar.gz -C ${{github.workspace}}/astronomy-mingw32 .
-          tar czf ${{github.workspace}}/enet-mingw32.tar.gz -C ${{github.workspace}}/enet-mingw32 .
+          tar czf ${{github.workspace}}/enet6-mingw32.tar.gz -C ${{github.workspace}}/enet6-mingw32 .
           tar czf ${{github.workspace}}/spng-mingw32.tar.gz -C ${{github.workspace}}/spng-mingw32 .
           tar czf ${{github.workspace}}/tomlc99-mingw32.tar.gz -C ${{github.workspace}}/tomlc99-mingw32 .
           tar czf ${{github.workspace}}/ffmpeg-mingw32.tar.gz -C ${{github.workspace}}/ffmpeg-mingw32 .
@@ -1246,7 +1222,7 @@ jobs:
           tar czf ${{github.workspace}}/zlib-mingw64.tar.gz -C ${{github.workspace}}/zlib-mingw64 .
           tar czf ${{github.workspace}}/centijson-mingw64.tar.gz -C ${{github.workspace}}/centijson-mingw64 .
           tar czf ${{github.workspace}}/astronomy-mingw64.tar.gz -C ${{github.workspace}}/astronomy-mingw64 .
-          tar czf ${{github.workspace}}/enet-mingw64.tar.gz -C ${{github.workspace}}/enet-mingw64 .
+          tar czf ${{github.workspace}}/enet6-mingw64.tar.gz -C ${{github.workspace}}/enet6-mingw64 .
           tar czf ${{github.workspace}}/spng-mingw64.tar.gz -C ${{github.workspace}}/spng-mingw64 .
           tar czf ${{github.workspace}}/tomlc99-mingw64.tar.gz -C ${{github.workspace}}/tomlc99-mingw64 .
           tar czf ${{github.workspace}}/ffmpeg-mingw64.tar.gz -C ${{github.workspace}}/ffmpeg-mingw64 .
@@ -1266,7 +1242,7 @@ jobs:
             ${{github.workspace}}/zlib-mingw32.tar.gz
             ${{github.workspace}}/centijson-mingw32.tar.gz
             ${{github.workspace}}/astronomy-mingw32.tar.gz
-            ${{github.workspace}}/enet-mingw32.tar.gz
+            ${{github.workspace}}/enet6-mingw32.tar.gz
             ${{github.workspace}}/spng-mingw32.tar.gz
             ${{github.workspace}}/tomlc99-mingw32.tar.gz
             ${{github.workspace}}/ffmpeg-mingw32.tar.gz
@@ -1277,7 +1253,7 @@ jobs:
             ${{github.workspace}}/zlib-mingw64.tar.gz
             ${{github.workspace}}/centijson-mingw64.tar.gz
             ${{github.workspace}}/astronomy-mingw64.tar.gz
-            ${{github.workspace}}/enet-mingw64.tar.gz
+            ${{github.workspace}}/enet6-mingw64.tar.gz
             ${{github.workspace}}/spng-mingw64.tar.gz
             ${{github.workspace}}/tomlc99-mingw64.tar.gz
             ${{github.workspace}}/ffmpeg-mingw64.tar.gz
