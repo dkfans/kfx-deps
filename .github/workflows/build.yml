@@ -220,12 +220,31 @@ jobs:
   ffmpeg-mingw32:
     runs-on: ubuntu-24.04
     steps:
-      - name: Install mingw-w64
+      - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends mingw-w64
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq \
+            --no-install-recommends mingw-w64 nasm
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Checkout x264
+        uses: actions/checkout@v4
+        with:
+          repository: mirror/x264
+          ref: master
+          path: x264
+      - name: Build x264
+        run: |
+          cd ${{github.workspace}}/x264 && ./configure \
+            --host=i686-w64-mingw32 \
+            --cross-prefix=i686-w64-mingw32- \
+            --prefix=${{github.workspace}}/x264-install \
+            --enable-static \
+            --disable-cli \
+            --disable-opencl \
+            --bit-depth=8
+          make -C ${{github.workspace}}/x264 -j4
+          make -C ${{github.workspace}}/x264 install-lib-static
       - name: Checkout ffmpeg
         uses: actions/checkout@v4
         with:
@@ -234,54 +253,56 @@ jobs:
           path: ffmpeg
       - name: Configure
         run: |
-            cd ${{github.workspace}}/ffmpeg && ./configure \
-              --disable-x86asm \
-              --disable-programs \
-              --disable-doc \
-              --disable-devices \
-              --disable-everything \
-              --disable-filters \
-              --disable-static \
-              --disable-avdevice \
-              --disable-swscale \
-              --disable-avfilter \
-              --disable-network \
-              --disable-dwt \
-              --disable-lsp \
-              --disable-faan \
-              --disable-iamf \
-              --disable-pixelutils \
-              --disable-debug \
-              --enable-shared \
-              --enable-small \
-              --enable-decoder=smacker \
-              --enable-decoder=smackaud \
-              --enable-demuxer=smacker \
-              --enable-protocol=file \
+            cd ${{github.workspace}}/ffmpeg && PKG_CONFIG_LIBDIR=${{github.workspace}}/x264-install/lib/pkgconfig ./configure \
               --arch=i686 \
               --target-os=mingw32 \
               --cross-prefix=i686-w64-mingw32- \
-              --enable-cross-compile
+              --pkg-config=pkg-config \
+              --enable-cross-compile \
+              --enable-static \
+              --disable-shared \
+              --disable-programs \
+              --disable-doc \
+              --disable-avdevice \
+              --disable-debug \
+              --enable-avformat \
+              --enable-avcodec \
+              --enable-swscale \
+              --enable-swresample \
+              --enable-gpl \
+              --enable-libx264 \
+              --enable-encoder=libx264,mpeg4,mjpeg,aac \
+              --enable-decoder=h264,mjpeg,mpeg4,smacker,smackaud \
+              --enable-muxer=mp4,avi,matroska \
+              --enable-demuxer=smacker,avi,mov \
+              --enable-protocol=file \
+              --extra-cflags="-I${{github.workspace}}/x264-install/include" \
+              --extra-ldflags="-L${{github.workspace}}/x264-install/lib" \
+              --enable-small
       - name: Build
         run: |
             make -C ${{github.workspace}}/ffmpeg \
               libavformat/libavformat.a \
               libavcodec/libavcodec.a \
               libavutil/libavutil.a \
-              libswresample/libswresample.a
+              libswresample/libswresample.a \
+              libswscale/libswscale.a
+      - name: Package files
+        run: |
+          mkdir -p ${{github.workspace}}/ffmpeg-package/lib
+          mkdir -p ${{github.workspace}}/ffmpeg-package/include
+          cp -r ${{github.workspace}}/ffmpeg/libavformat ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libavcodec ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libavutil ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libswresample ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libswscale ${{github.workspace}}/ffmpeg-package/
+          cp ${{github.workspace}}/x264-install/lib/libx264.a ${{github.workspace}}/ffmpeg-package/lib/
+          cp ${{github.workspace}}/x264-install/include/*.h ${{github.workspace}}/ffmpeg-package/include/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-mingw32
-          path: |
-            ${{github.workspace}}/ffmpeg/libavformat/*.h
-            ${{github.workspace}}/ffmpeg/libavformat/libavformat.a
-            ${{github.workspace}}/ffmpeg/libavcodec/*.h
-            ${{github.workspace}}/ffmpeg/libavcodec/libavcodec.a
-            ${{github.workspace}}/ffmpeg/libavutil/*.h
-            ${{github.workspace}}/ffmpeg/libavutil/libavutil.a
-            ${{github.workspace}}/ffmpeg/libswresample/*.h
-            ${{github.workspace}}/ffmpeg/libswresample/libswresample.a
+          path: ${{github.workspace}}/ffmpeg-package
 
   openal-mingw32:
     runs-on: ubuntu-24.04
@@ -676,12 +697,31 @@ jobs:
   ffmpeg-mingw64:
     runs-on: ubuntu-24.04
     steps:
-      - name: Install mingw-w64
+      - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends mingw-w64
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq \
+            --no-install-recommends mingw-w64 nasm
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Checkout x264
+        uses: actions/checkout@v4
+        with:
+          repository: mirror/x264
+          ref: master
+          path: x264
+      - name: Build x264
+        run: |
+          cd ${{github.workspace}}/x264 && ./configure \
+            --host=x86_64-w64-mingw32 \
+            --cross-prefix=x86_64-w64-mingw32- \
+            --prefix=${{github.workspace}}/x264-install \
+            --enable-static \
+            --disable-cli \
+            --disable-opencl \
+            --bit-depth=8
+          make -C ${{github.workspace}}/x264 -j4
+          make -C ${{github.workspace}}/x264 install-lib-static
       - name: Checkout ffmpeg
         uses: actions/checkout@v4
         with:
@@ -690,54 +730,56 @@ jobs:
           path: ffmpeg
       - name: Configure
         run: |
-            cd ${{github.workspace}}/ffmpeg && ./configure \
-              --disable-x86asm \
-              --disable-programs \
-              --disable-doc \
-              --disable-devices \
-              --disable-everything \
-              --disable-filters \
-              --disable-static \
-              --disable-avdevice \
-              --disable-swscale \
-              --disable-avfilter \
-              --disable-network \
-              --disable-dwt \
-              --disable-lsp \
-              --disable-faan \
-              --disable-iamf \
-              --disable-pixelutils \
-              --disable-debug \
-              --enable-shared \
-              --enable-small \
-              --enable-decoder=smacker \
-              --enable-decoder=smackaud \
-              --enable-demuxer=smacker \
-              --enable-protocol=file \
+            cd ${{github.workspace}}/ffmpeg && PKG_CONFIG_LIBDIR=${{github.workspace}}/x264-install/lib/pkgconfig ./configure \
               --arch=x86_64 \
               --target-os=mingw32 \
               --cross-prefix=x86_64-w64-mingw32- \
-              --enable-cross-compile
+              --pkg-config=pkg-config \
+              --enable-cross-compile \
+              --enable-static \
+              --disable-shared \
+              --disable-programs \
+              --disable-doc \
+              --disable-avdevice \
+              --disable-debug \
+              --enable-avformat \
+              --enable-avcodec \
+              --enable-swscale \
+              --enable-swresample \
+              --enable-gpl \
+              --enable-libx264 \
+              --enable-encoder=libx264,mpeg4,mjpeg,aac \
+              --enable-decoder=h264,mjpeg,mpeg4,smacker,smackaud \
+              --enable-muxer=mp4,avi,matroska \
+              --enable-demuxer=smacker,avi,mov \
+              --enable-protocol=file \
+              --extra-cflags="-I${{github.workspace}}/x264-install/include" \
+              --extra-ldflags="-L${{github.workspace}}/x264-install/lib" \
+              --enable-small
       - name: Build
         run: |
             make -C ${{github.workspace}}/ffmpeg \
               libavformat/libavformat.a \
               libavcodec/libavcodec.a \
               libavutil/libavutil.a \
-              libswresample/libswresample.a
+              libswresample/libswresample.a \
+              libswscale/libswscale.a
+      - name: Package files
+        run: |
+          mkdir -p ${{github.workspace}}/ffmpeg-package/lib
+          mkdir -p ${{github.workspace}}/ffmpeg-package/include
+          cp -r ${{github.workspace}}/ffmpeg/libavformat ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libavcodec ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libavutil ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libswresample ${{github.workspace}}/ffmpeg-package/
+          cp -r ${{github.workspace}}/ffmpeg/libswscale ${{github.workspace}}/ffmpeg-package/
+          cp ${{github.workspace}}/x264-install/lib/libx264.a ${{github.workspace}}/ffmpeg-package/lib/
+          cp ${{github.workspace}}/x264-install/include/*.h ${{github.workspace}}/ffmpeg-package/include/
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-mingw64
-          path: |
-            ${{github.workspace}}/ffmpeg/libavformat/*.h
-            ${{github.workspace}}/ffmpeg/libavformat/libavformat.a
-            ${{github.workspace}}/ffmpeg/libavcodec/*.h
-            ${{github.workspace}}/ffmpeg/libavcodec/libavcodec.a
-            ${{github.workspace}}/ffmpeg/libavutil/*.h
-            ${{github.workspace}}/ffmpeg/libavutil/libavutil.a
-            ${{github.workspace}}/ffmpeg/libswresample/*.h
-            ${{github.workspace}}/ffmpeg/libswresample/libswresample.a
+          path: ${{github.workspace}}/ffmpeg-package
 
   openal-mingw64:
     runs-on: ubuntu-24.04
@@ -1218,7 +1260,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          token: ${{ secrets.GA_TEST_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           make_latest: true
           files: |
             ${{github.workspace}}/zlib-mingw32.tar.gz
