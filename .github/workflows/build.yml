@@ -38,7 +38,6 @@ jobs:
             cp ${{github.workspace}}/zlib/*.h ${{github.workspace}}/zlib/build/include/
             cp ${{github.workspace}}/zlib/contrib/minizip/*.h ${{github.workspace}}/zlib/build/include/minizip/
             cp ${{github.workspace}}/zlib/build/zconf.h ${{github.workspace}}/zlib/build/include/
-            mv ${{github.workspace}}/zlib/build/libzlibstatic.a ${{github.workspace}}/zlib/build/libz.a
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -543,7 +542,6 @@ jobs:
             cp ${{github.workspace}}/zlib/*.h ${{github.workspace}}/zlib/build/include/
             cp ${{github.workspace}}/zlib/contrib/minizip/*.h ${{github.workspace}}/zlib/build/include/minizip/
             cp ${{github.workspace}}/zlib/build/zconf.h ${{github.workspace}}/zlib/build/include/
-            mv ${{github.workspace}}/zlib/build/libzlibstatic.a ${{github.workspace}}/zlib/build/libz.a
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
