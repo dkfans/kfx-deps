@@ -479,7 +479,7 @@ jobs:
             -DBUILD_CURL_EXE=OFF \
             -DBUILD_TESTING=OFF \
             -DCURL_USE_SCHANNEL=ON \
-            -DCURL_DISABLE_PSL=ON \
+            -DCURL_USE_LIBPSL=OFF \
             -DZLIB_INCLUDE_DIR=${{github.workspace}}/zlib/include \
             -DZLIB_LIBRARY=${{github.workspace}}/zlib/libz.a
       - name: Build
@@ -977,7 +977,7 @@ jobs:
             -DBUILD_CURL_EXE=OFF \
             -DBUILD_TESTING=OFF \
             -DCURL_USE_SCHANNEL=ON \
-            -DCURL_DISABLE_PSL=ON \
+            -DCURL_USE_LIBPSL=OFF \
             -DZLIB_INCLUDE_DIR=${{github.workspace}}/zlib/include \
             -DZLIB_LIBRARY=${{github.workspace}}/zlib/libz.a
       - name: Build
