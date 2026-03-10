@@ -1,0 +1,13 @@
+# Build artifacts and test scripts
+build-ffmpeg-h264.sh
+ffmpeg-build/
+ffmpeg/
+x264-build/
+x264-install/
+
+# Build directories
+*-build/
+*-install/
+
+# Test outputs
+*.tar.gz
