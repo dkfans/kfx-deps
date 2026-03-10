@@ -1143,7 +1143,7 @@ jobs:
             -DBUILD_CURL_EXE=OFF \
             -DBUILD_TESTING=OFF \
             -DCURL_USE_OPENSSL=ON \
-            -DCURL_DISABLE_PSL=ON
+            -DCURL_USE_LIBPSL=OFF
       - name: Build
         run: cmake --build ${{github.workspace}}/curl/build --config Release
       - name: Package files
