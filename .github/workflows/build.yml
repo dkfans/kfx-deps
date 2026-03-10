@@ -38,7 +38,6 @@ jobs:
             cp ${{github.workspace}}/zlib/*.h ${{github.workspace}}/zlib/build/include/
             cp ${{github.workspace}}/zlib/contrib/minizip/*.h ${{github.workspace}}/zlib/build/include/minizip/
             cp ${{github.workspace}}/zlib/build/zconf.h ${{github.workspace}}/zlib/build/include/
-            mv ${{github.workspace}}/zlib/build/libzlibstatic.a ${{github.workspace}}/zlib/build/libz.a
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -449,6 +448,54 @@ jobs:
             ${{github.workspace}}/libnatpmp/build/include
             ${{github.workspace}}/libnatpmp/build/libnatpmp.a
 
+  libcurl-mingw32:
+    runs-on: ubuntu-24.04
+    needs: zlib-mingw32
+    steps:
+      - name: Install mingw-w64
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends mingw-w64
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Checkout curl
+        uses: actions/checkout@v4
+        with:
+          repository: curl/curl
+          ref: master
+          path: curl
+      - name: Download zlib
+        uses: actions/download-artifact@v4
+        with:
+          name: zlib-mingw32
+          path: ${{github.workspace}}/zlib
+      - name: Configure
+        run: |
+          CMAKE_TOOLCHAIN_FILE=${{github.workspace}}/mingw32.cmake \
+          CMAKE_BUILD_TYPE=Release cmake \
+            -B ${{github.workspace}}/curl/build \
+            -S ${{github.workspace}}/curl \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DBUILD_CURL_EXE=OFF \
+            -DBUILD_TESTING=OFF \
+            -DCURL_USE_SCHANNEL=ON \
+            -DCURL_USE_LIBPSL=OFF \
+            -DZLIB_INCLUDE_DIR=${{github.workspace}}/zlib/include \
+            -DZLIB_LIBRARY=${{github.workspace}}/zlib/libz.a
+      - name: Build
+        run: cmake --build ${{github.workspace}}/curl/build --config Release
+      - name: Package files
+        run: |
+            mkdir -p ${{github.workspace}}/curl/build/include/
+            cp -r ${{github.workspace}}/curl/include/curl ${{github.workspace}}/curl/build/include/
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libcurl-mingw32
+          path: |
+            ${{github.workspace}}/curl/build/include
+            ${{github.workspace}}/curl/build/lib/libcurl.a
+
   zlib-mingw64:
     runs-on: ubuntu-24.04
     steps:
@@ -495,7 +542,6 @@ jobs:
             cp ${{github.workspace}}/zlib/*.h ${{github.workspace}}/zlib/build/include/
             cp ${{github.workspace}}/zlib/contrib/minizip/*.h ${{github.workspace}}/zlib/build/include/minizip/
             cp ${{github.workspace}}/zlib/build/zconf.h ${{github.workspace}}/zlib/build/include/
-            mv ${{github.workspace}}/zlib/build/libzlibstatic.a ${{github.workspace}}/zlib/build/libz.a
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -900,6 +946,54 @@ jobs:
             ${{github.workspace}}/libnatpmp/build/include
             ${{github.workspace}}/libnatpmp/build/libnatpmp.a
 
+  libcurl-mingw64:
+    runs-on: ubuntu-24.04
+    needs: zlib-mingw64
+    steps:
+      - name: Install mingw-w64
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends mingw-w64
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Checkout curl
+        uses: actions/checkout@v4
+        with:
+          repository: curl/curl
+          ref: master
+          path: curl
+      - name: Download zlib
+        uses: actions/download-artifact@v4
+        with:
+          name: zlib-mingw64
+          path: ${{github.workspace}}/zlib
+      - name: Configure
+        run: |
+          CMAKE_TOOLCHAIN_FILE=${{github.workspace}}/mingw64.cmake \
+          CMAKE_BUILD_TYPE=Release cmake \
+            -B ${{github.workspace}}/curl/build \
+            -S ${{github.workspace}}/curl \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DBUILD_CURL_EXE=OFF \
+            -DBUILD_TESTING=OFF \
+            -DCURL_USE_SCHANNEL=ON \
+            -DCURL_USE_LIBPSL=OFF \
+            -DZLIB_INCLUDE_DIR=${{github.workspace}}/zlib/include \
+            -DZLIB_LIBRARY=${{github.workspace}}/zlib/libz.a
+      - name: Build
+        run: cmake --build ${{github.workspace}}/curl/build --config Release
+      - name: Package files
+        run: |
+            mkdir -p ${{github.workspace}}/curl/build/include/
+            cp -r ${{github.workspace}}/curl/include/curl ${{github.workspace}}/curl/build/include/
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libcurl-mingw64
+          path: |
+            ${{github.workspace}}/curl/build/include
+            ${{github.workspace}}/curl/build/lib/libcurl.a
+
   centijson-lin64:
     runs-on: ubuntu-24.04
     steps:
@@ -1025,6 +1119,43 @@ jobs:
             ${{github.workspace}}/enet6/build/include
             ${{github.workspace}}/enet6/build/libenet6.a
 
+  libcurl-lin64:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends libssl-dev
+      - name: Checkout curl
+        uses: actions/checkout@v4
+        with:
+          repository: curl/curl
+          ref: master
+          path: curl
+      - name: Configure
+        run: |
+          CMAKE_BUILD_TYPE=Release cmake \
+            -B ${{github.workspace}}/curl/build \
+            -S ${{github.workspace}}/curl \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DBUILD_CURL_EXE=OFF \
+            -DBUILD_TESTING=OFF \
+            -DCURL_USE_OPENSSL=ON \
+            -DCURL_USE_LIBPSL=OFF
+      - name: Build
+        run: cmake --build ${{github.workspace}}/curl/build --config Release
+      - name: Package files
+        run: |
+            mkdir -p ${{github.workspace}}/curl/build/include/
+            cp -r ${{github.workspace}}/curl/include/curl ${{github.workspace}}/curl/build/include/
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libcurl-lin64
+          path: |
+            ${{github.workspace}}/curl/build/include
+            ${{github.workspace}}/curl/build/lib/libcurl.a
+
   release:
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-24.04
@@ -1040,6 +1171,7 @@ jobs:
       - luajit-mingw32
       - miniupnpc-mingw32
       - libnatpmp-mingw32
+      - libcurl-mingw32
       - zlib-mingw64
       - centijson-mingw64
       - astronomy-mingw64
@@ -1051,10 +1183,12 @@ jobs:
       - luajit-mingw64
       - miniupnpc-mingw64
       - libnatpmp-mingw64
+      - libcurl-mingw64
       - centijson-lin64
       - astronomy-lin64
       - tomlc99-lin64
       - enet6-lin64
+      - libcurl-lin64
     steps:
       - name: Download zlib-mingw32
         uses: actions/download-artifact@v4
@@ -1111,6 +1245,11 @@ jobs:
         with:
           name: libnatpmp-mingw32
           path: ${{github.workspace}}/libnatpmp-mingw32
+      - name: Download libcurl-mingw32
+        uses: actions/download-artifact@v4
+        with:
+          name: libcurl-mingw32
+          path: ${{github.workspace}}/libcurl-mingw32
 
       - name: Download zlib-mingw64
         uses: actions/download-artifact@v4
@@ -1167,6 +1306,11 @@ jobs:
         with:
           name: libnatpmp-mingw64
           path: ${{github.workspace}}/libnatpmp-mingw64
+      - name: Download libcurl-mingw64
+        uses: actions/download-artifact@v4
+        with:
+          name: libcurl-mingw64
+          path: ${{github.workspace}}/libcurl-mingw64
       - name: Download centijson-lin64
         uses: actions/download-artifact@v4
         with:
@@ -1187,6 +1331,11 @@ jobs:
         with:
           name: enet6-lin64
           path: ${{github.workspace}}/enet6-lin64
+      - name: Download libcurl-lin64
+        uses: actions/download-artifact@v4
+        with:
+          name: libcurl-lin64
+          path: ${{github.workspace}}/libcurl-lin64
       - name: Create tarballs
         run: |
           tar czf ${{github.workspace}}/zlib-mingw32.tar.gz -C ${{github.workspace}}/zlib-mingw32 .
@@ -1200,6 +1349,7 @@ jobs:
           tar czf ${{github.workspace}}/luajit-mingw32.tar.gz -C ${{github.workspace}}/luajit-mingw32 .
           tar czf ${{github.workspace}}/miniupnpc-mingw32.tar.gz -C ${{github.workspace}}/miniupnpc-mingw32 .
           tar czf ${{github.workspace}}/libnatpmp-mingw32.tar.gz -C ${{github.workspace}}/libnatpmp-mingw32 .
+          tar czf ${{github.workspace}}/libcurl-mingw32.tar.gz -C ${{github.workspace}}/libcurl-mingw32 .
           tar czf ${{github.workspace}}/zlib-mingw64.tar.gz -C ${{github.workspace}}/zlib-mingw64 .
           tar czf ${{github.workspace}}/centijson-mingw64.tar.gz -C ${{github.workspace}}/centijson-mingw64 .
           tar czf ${{github.workspace}}/astronomy-mingw64.tar.gz -C ${{github.workspace}}/astronomy-mingw64 .
@@ -1211,10 +1361,12 @@ jobs:
           tar czf ${{github.workspace}}/luajit-mingw64.tar.gz -C ${{github.workspace}}/luajit-mingw64 .
           tar czf ${{github.workspace}}/miniupnpc-mingw64.tar.gz -C ${{github.workspace}}/miniupnpc-mingw64 .
           tar czf ${{github.workspace}}/libnatpmp-mingw64.tar.gz -C ${{github.workspace}}/libnatpmp-mingw64 .
+          tar czf ${{github.workspace}}/libcurl-mingw64.tar.gz -C ${{github.workspace}}/libcurl-mingw64 .
           tar czf ${{github.workspace}}/centijson-lin64.tar.gz -C ${{github.workspace}}/centijson-lin64 .
           tar czf ${{github.workspace}}/astronomy-lin64.tar.gz -C ${{github.workspace}}/astronomy-lin64 .
           tar czf ${{github.workspace}}/tomlc99-lin64.tar.gz -C ${{github.workspace}}/tomlc99-lin64 .
           tar czf ${{github.workspace}}/enet6-lin64.tar.gz -C ${{github.workspace}}/enet6-lin64 .
+          tar czf ${{github.workspace}}/libcurl-lin64.tar.gz -C ${{github.workspace}}/libcurl-lin64 .
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
@@ -1232,6 +1384,7 @@ jobs:
             ${{github.workspace}}/luajit-mingw32.tar.gz
             ${{github.workspace}}/miniupnpc-mingw32.tar.gz
             ${{github.workspace}}/libnatpmp-mingw32.tar.gz
+            ${{github.workspace}}/libcurl-mingw32.tar.gz
             ${{github.workspace}}/zlib-mingw64.tar.gz
             ${{github.workspace}}/centijson-mingw64.tar.gz
             ${{github.workspace}}/astronomy-mingw64.tar.gz
@@ -1243,7 +1396,9 @@ jobs:
             ${{github.workspace}}/luajit-mingw64.tar.gz
             ${{github.workspace}}/miniupnpc-mingw64.tar.gz
             ${{github.workspace}}/libnatpmp-mingw64.tar.gz
+            ${{github.workspace}}/libcurl-mingw64.tar.gz
             ${{github.workspace}}/centijson-lin64.tar.gz
             ${{github.workspace}}/astronomy-lin64.tar.gz
             ${{github.workspace}}/tomlc99-lin64.tar.gz
             ${{github.workspace}}/enet6-lin64.tar.gz
+            ${{github.workspace}}/libcurl-lin64.tar.gz
